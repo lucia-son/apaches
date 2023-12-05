@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: flink-jobmanager
+  namespace: apache
 spec:
   replicas: 1
   selector:
@@ -16,7 +17,8 @@ spec:
     spec:
       containers:
       - name: jobmanager
-        image: apache/flink:young
+        image: kafka-flink:1.0.0
+        imagePullPolicy: IfNotPresent
         args: ["jobmanager"]
         ports:
         - containerPort: 6123

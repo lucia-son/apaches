@@ -1,0 +1,49 @@
+executor: "KubernetesExecutor" 
+webserverSecretKey: webserver-secret-key 
+webserverSecretKeySecretName: airflow-webserver-secret 
+data: 
+  metadataConnection:
+    user: young
+    pass: test123
+    db: airflow
+dags:
+  gitSync: 
+    enabled: true
+    repo: git@github.com:lucia-son/airflow-dag.git
+    branch: main
+    rev: HEAD
+    depth: 1
+    maxFailures: 0
+    subPath: dags
+    sshKeySecret: "airflow-ssh-git-secret"
+webserver:
+  service: 
+    type: NodePort
+    ports: 
+      - name: airflow-ui
+        port: 8080
+        targetPort: 8080
+        nodePort: 31151
+postgresql:
+  enabled: true 
+  image:
+    tag: "11"
+  auth: 
+    enablePostgresUser: true
+    postgresPassword: postgres
+    username: young
+    password: test123
+    database: "airflow" 
+  primary:
+    service:
+      type: NodePort
+      nodePorts: 
+        postgresql: 31082
+workers: 
+  persistence:
+    size: 10Gi
+    storageClassName: "local-path"
+triggerer: 
+  persistence:
+    size: 10Gi
+    storageClassName: "local-path"
